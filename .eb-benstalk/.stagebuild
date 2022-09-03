@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Author: PGS
+
+codeBuildBucket="demopimcorw32145"
+
+buildFolder="builds"
+
+buildZipName="sample.zip"
+
+mkdir -p ${buildFolder}
+
+if [ -d "var/classes" ]
+
+then
+cp -r var/classes/* ${buildFolder}
+fi
+
+echo "Extracting Zip....."
+
+zip ${buildZipName} -r . -x "pimcore" -x "pimcore/*" -x ".scannerwork" -x ".scannerwork/*" -x "*.git*" -x "*.git*/*" -x "*.zip" > /dev/null
+
+echo "Zip created successfully"
+
+echo "Uploading to S3 Bucket...."
+
+aws s3 cp ${buildZipName} s3://${codeBuildBucket}/ > /dev/null
+
+echo "Zip uploaded to bucket successfully"
